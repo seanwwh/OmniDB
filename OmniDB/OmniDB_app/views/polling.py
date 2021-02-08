@@ -219,7 +219,6 @@ def create_request(request):
                     None
 
     else:
-
         #Check database prompt timeout
         if v_data['v_db_index']!=None:
             v_timeout = v_session.DatabaseReachPasswordTimeout(v_data['v_db_index'])
@@ -339,6 +338,7 @@ def create_request(request):
             v_data['v_database'] = tab_object['omnidatabase']
             v_data['v_client_object'] = client_object
             v_data['v_session'] = v_session
+
             #Query request
             if v_code == requestType.Query:
                 tab_object['tab_db_id'] = v_data['v_tab_db_id']
@@ -349,6 +349,11 @@ def create_request(request):
                 tab_object['sql_cmd'] = v_data['v_sql_cmd']
                 tab_object['sql_save'] = v_data['v_sql_save']
                 tab_object['tab_id'] = v_data['v_tab_id']
+                logger.info("omnidb_user: {0}; db_user: {1}; active_db: {2}; requestType: Query; sql_cmd: {3}".format(
+                    v_session.v_user_name,
+                    v_data['v_database'].v_active_user,
+                    v_data['v_database'].v_active_service,
+                    v_data['v_sql_cmd']))
                 #t.setDaemon(True)
                 t.start()
 
@@ -360,6 +365,11 @@ def create_request(request):
                 tab_object['type'] = 'console'
                 tab_object['sql_cmd'] = v_data['v_sql_cmd']
                 tab_object['tab_id'] = v_data['v_tab_id']
+                logger.info("omnidb_user: {0}; db_user: {1}; active_db: {2}; requestType: Console; sql_cmd: {3}".format(
+                    v_session.v_user_name,
+                    v_data['v_database'].v_active_user,
+                    v_data['v_database'].v_active_service,
+                    v_data['v_sql_cmd']))
                 #t.setDaemon(True)
                 t.start()
 
@@ -368,6 +378,11 @@ def create_request(request):
                 t = StoppableThread(thread_query_edit_data,v_data)
                 tab_object['thread'] = t
                 tab_object['type'] = 'edit'
+                logger.info("omnidb_user: {0}; db_user: {1}; active_db: {2}; requestType: QueryEditData; table: {3}; filter: {4}".format(
+                    v_session.v_user_name,
+                    v_data['v_database'].v_active_user,
+                    v_data['v_database'].v_active_service,
+                    v_data['v_table'], v_data['v_filter']))
                 #t.setDaemon(True)
                 t.start()
 
@@ -376,6 +391,11 @@ def create_request(request):
                 t = StoppableThread(thread_save_edit_data,v_data)
                 tab_object['thread'] = t
                 tab_object['type'] = 'edit'
+                logger.info("omnidb_user: {0}; db_user: {1}; active_db: {2}; requestType: SaveEditData; v_table: {3}; data_rows: {4}".format(
+                    v_session.v_user_name,
+                    v_data['v_database'].v_active_user,
+                    v_data['v_database'].v_active_service,
+                    v_data['v_table'], v_data['v_data_rows']))
                 #t.setDaemon(True)
                 t.start()
 
@@ -854,6 +874,14 @@ def thread_query(self,args):
                 #    f = Spartacus.Utils.DataFileWriter(os.path.join(v_export_dir, v_file_name), v_data1.Columns, 'windows-1252')
                 #else:
                 #    f = Spartacus.Utils.DataFileWriter(os.path.join(v_export_dir, v_file_name), v_data1.Columns)
+
+                logger.info("omnidb_user: {0}; db_user: {1}; active_db: {2}; requestType: Export File; sql_cmd: {3}; file_name: {4}".format(
+                    v_session.v_user_name,
+                    v_database.v_active_user,
+                    v_database.v_active_service,
+                    v_sql,
+                    v_file_name))
+
                 f = Spartacus.Utils.DataFileWriter(os.path.join(v_export_dir, v_file_name), v_data1.Columns,v_session.v_csv_encoding, v_session.v_csv_delimiter)
                 f.Open()
                 if v_database.v_connection.v_start:

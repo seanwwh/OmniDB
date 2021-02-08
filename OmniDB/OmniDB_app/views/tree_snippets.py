@@ -275,7 +275,8 @@ def save_snippet_text(request):
         #existing snippet
         else:
             file = SnippetFile.objects.get(id=v_id)
-            file.text = v_text.replace("'", "''")
+            #file.text = v_text.replace("'", "''") comment by Sean
+            file.text = v_text
             file.modify_date=new_date
             file.save()
 

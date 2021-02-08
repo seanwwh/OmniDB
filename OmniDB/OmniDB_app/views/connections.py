@@ -26,6 +26,9 @@ from OmniDB_app.views.memory_objects import *
 
 from django.db.models import Q
 
+import logging
+logger = logging.getLogger('OmniDB_app.Connections')
+
 @user_authenticated
 def get_connections(request):
 
@@ -352,6 +355,16 @@ def save_connection(request):
 
     json_object = json.loads(request.POST.get('data', None))
     p_id = json_object['id']
+
+    logger.info("save_connection:: omnidb_user: {0}; server: {1}; port: {2}; database: {3}; db_user: {4}; ssh_tunnel: {5}; conn_string: {6}".format(
+        request.user,
+        json_object['server'],
+        json_object['port'],
+        json_object['database'],
+        json_object['user'],
+        json_object['tunnel'],
+        json_object['connstring']))
+
     try:
         # New connection
         if p_id == -1:
@@ -470,6 +483,16 @@ def delete_connection(request):
 
         conn.delete()
         v_session.RemoveDatabase(p_id)
+
+        logger.info(
+            "delete_connection:: omnidb_user: {0}; conn.id: {1}; conn.alias: {2}; conn.server: {3}; conn.port: {4}; conn.username: {5}; conn.conn_string: {6};".format(
+                request.user,
+                conn.id,
+                conn.alias,
+                conn.server,
+                conn.port,
+                conn.username,
+                conn.conn_string))
     except Exception as exc:
         v_return['v_data'] = str(exc)
         v_return['v_error'] = True

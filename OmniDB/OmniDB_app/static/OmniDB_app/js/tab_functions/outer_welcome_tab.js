@@ -236,20 +236,20 @@ var v_createWelcomeTabFunction = function(p_index,p_create_query_tab = true, p_n
             // Title
             v_html_title +
             // Welcome grid
-            '<div style="display: grid; grid-template: \'intro getting_started links\'; grid-gap: 64px;">' +
-              // Intro area
-              '<div style="grid-area: intro;">' +
-                v_html_intro +
-              '</div>' +
-              // Getting started area
-              // '<div style="grid-area: getting_started">' +
-              //   v_html_getting_started +
-              // '</div>' +
-              // Links area
-              '<div style="grid-area: links;">' +
-                v_html_useful_links +
-              '</div>' +
-            '</div>' +
+            // '<div style="display: grid; grid-template: \'intro getting_started links\'; grid-gap: 64px;">' +
+            //   // Intro area
+            //   '<div style="grid-area: intro;">' +
+            //     v_html_intro +
+            //   '</div>' +
+            //   // Getting started area
+            //   // '<div style="grid-area: getting_started">' +
+            //   //   v_html_getting_started +
+            //   // '</div>' +
+            //   // Links area
+            //   '<div style="grid-area: links;">' +
+            //     v_html_useful_links +
+            //   '</div>' +
+            // '</div>' +
           '</div>' +
         '</div>' +
 

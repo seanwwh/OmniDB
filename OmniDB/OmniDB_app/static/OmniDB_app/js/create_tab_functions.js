@@ -402,7 +402,7 @@ function initCreateTabFunctions() {
   v_connTabControl.tag.createSnippetTextTab = v_createSnippetTextTabFunction;
 
 	// Functions to create welcome tab globally
-	v_connTabControl.tag.createWelcomeTab = v_createWelcomeTabFunction;
+	//v_connTabControl.tag.createWelcomeTab = v_createWelcomeTabFunction;
 
   // Functions to create tabs inside a connection tab
 	v_connTabControl.tag.createQueryTab = v_createQueryTabFunction;

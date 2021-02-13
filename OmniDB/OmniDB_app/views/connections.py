@@ -50,14 +50,27 @@ def get_connections(request):
     for tech in Technology.objects.all():
         v_tech_list.append(tech.name)
 
+    v_user_list = []
+    v_user_dict = {}
+    for user in UserDetails.objects.all():
+        v_user_object = {'user_id': user.user_id, 'user_name': user.user.username}
+        v_user_list.append(v_user_object)
+        v_user_dict[user.user_id] = user.user.username
+
     v_connection_list = []
     try:
-        for conn in Connection.objects.filter(Q(user=request.user) | Q(public=True)):
+        if request.user.is_superuser:
+            v_conns = Connection.objects.all()
+        else:
+            v_conns = Connection.objects.filter(Q(user=request.user) | Q(public=True))
+        for conn in v_conns:
 
             conn.user.id != request.user.id
 
             v_conn_object = {
                 'id': conn.id,
+                'user_id': conn.user_id,
+                'user_name': v_user_dict[conn.user_id],
                 'locked': False,
                 'public': conn.public,
                 'is_mine': conn.user.id == request.user.id,
@@ -96,7 +109,9 @@ def get_connections(request):
 
     v_return['v_data'] = {
         'v_conn_list': v_connection_list,
-        'v_technologies': v_tech_list
+        'v_technologies': v_tech_list,
+        'v_users': v_user_list,
+        'v_is_super': request.user.is_superuser
     }
 
     return JsonResponse(v_return)
@@ -368,8 +383,11 @@ def save_connection(request):
     try:
         # New connection
         if p_id == -1:
+            v_user = request.user
+            v_user.id = int(json_object['omnidb_user'])
             conn = Connection(
-                user=request.user,
+                user=v_user,
+                user_id=int(json_object['omnidb_user']),
                 technology=Technology.objects.get(name=json_object['type']),
                 server=json_object['server'],
                 port=json_object['port'],
@@ -396,7 +414,8 @@ def save_connection(request):
                 v_return['v_data'] = 'This connection does not belong to you.'
                 v_return['v_error'] = True
                 return JsonResponse(v_return)
-
+            conn.user.id = int(json_object['omnidb_user'])
+            conn.user_id = int(json_object['omnidb_user'])
             conn.technology=Technology.objects.get(name=json_object['type'])
             conn.server=json_object['server']
             conn.port=json_object['port']
@@ -476,7 +495,7 @@ def delete_connection(request):
     try:
         conn = Connection.objects.get(id=p_id)
 
-        if conn.user.id != request.user.id:
+        if conn.user.id != request.user.id and request.user.is_superuser == False:
             v_return['v_data'] = 'This connection does not belong to you.'
             v_return['v_error'] = True
             return JsonResponse(v_return)

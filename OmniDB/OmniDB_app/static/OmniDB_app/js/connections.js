@@ -31,6 +31,7 @@ SOFTWARE.
 /// </summary>
 $(function () {
 	v_connections_data = new Object();
+  v_connections_data.users = null;
   v_connections_data.technologies = null;
   v_connections_data.card_list = [];
   v_connections_data.current_id = -1;
@@ -68,6 +69,8 @@ function showConnectionList(p_open_modal, p_change_group) {
 
       v_connections_data.card_list = [];
       v_connections_data.technologies = p_return.v_data.v_technologies;
+      v_connections_data.users = p_return.v_data.v_users;
+      v_connections_data.is_super = p_return.v_data.v_is_super;
 
       //Building connection cards
 			var v_container = null;
@@ -84,13 +87,10 @@ function showConnectionList(p_open_modal, p_change_group) {
 			v_row.innerHTML =
 			'<div id="connections_management_empty_all" class="my-4 text-center w-100" style="display:none;">' +
 				'<h5 class="">No connections available.</h5>' +
-				'<button type="button" class="mt-4 btn omnidb__theme__btn--primary" onclick="newConnection();">New Connection</button>' +
 			'</div>' +
 			'<div id="connections_management_empty_with_public" class="my-4 text-center w-100" style="display:none;">' +
 				'<i class="fas fa-arrow-up text-info"></i>' +
 				'<h5 class="">Your user has no connections configured yet, but there are <i class="fas fa-users text-info mx-2"></i> public connections.</h5>' +
-				'<h5 class="d-inline-block mt-4 mr-2">You can also create your own</h5>' +
-				'<button type="button" class="mt-2 btn omnidb__theme__btn--primary" onclick="newConnection();">New Connection</button>' +
 			'</div>' +
 			'<div id="connections_management_empty_group" class="my-4 text-center w-100" style="display:none;">' +
 				'<h5 class="">No connections assigned to this group yet.</h5>' +
@@ -129,8 +129,21 @@ function showConnectionList(p_open_modal, p_change_group) {
 
 				v_cover_div.innerHTML = v_check_svg;
 
-        var v_card_body_div = document.createElement('div');
-        v_card_body_div.className = 'card-body';
+		if (v_connections_data.is_super==true){
+			var v_card_user_div = document.createElement('div');
+        	v_card_user_div.className = 'card-body-title';
+        	v_card_user_div.style = "text-align:center";
+        	v_card_user_div.textContent = v_conn_obj.user_name;
+        	v_card_div.appendChild(v_card_user_div);
+
+        	var v_card_body_div = document.createElement('div');
+        	v_card_body_div.className = 'card-body-superuser';
+		}
+        else{
+        	var v_card_body_div = document.createElement('div');
+        	v_card_body_div.className = 'card-body';
+        }
+
         v_card_div.appendChild(v_card_body_div);
 				// Empty icon info
 				var v_icon = '';
@@ -173,20 +186,24 @@ function showConnectionList(p_open_modal, p_change_group) {
 					}
         }
 
-
 				v_card_body_div.innerHTML +=
 				'<div class="card-body-icon">' +
 					v_icon +
 				'</div>' +
 				'<div class="card-body-title">' +
 					v_title +
-				'</div>' +
-				'<div class="card-body-details">' +
-					v_details +
-				'</div>' +
-				'<div class="card-body-tunnel">' +
-					v_tunnel +
 				'</div>';
+
+        		if (v_connections_data.is_super==true){
+        			v_card_body_div.innerHTML +=
+					'<div class="card-body-details">' +
+						v_details +
+					'</div>' +
+					'<div class="card-body-tunnel">' +
+						v_tunnel +
+					'</div>';
+				}
+
 				v_card_body_div.appendChild(v_checkbox);
 				v_card_body_div.appendChild(v_cover_div);
 
@@ -203,41 +220,43 @@ function showConnectionList(p_open_modal, p_change_group) {
 				v_button_select.innerHTML = '<svg width="15px" height="160px" viewBox="0 0 15 160" style="width: auto;height: 100%;stroke: none;stroke-width: 0;"><path stroke-width="0" stroke="none" d="M 0 0 L 15 80 L 0 160 Z"></path></svg><i class="fas fa-plug"></i>';
 				v_card_body_buttons.appendChild(v_button_select);
 
-        var v_button_edit = document.createElement('button');
-        v_button_edit.className = 'btn btn-sm mx-1 omnidb__theme__btn--primary';
-        v_button_edit.title = "Edit";
-        /*if (v_conn_obj.locked==true) {
-					v_button_edit.setAttribute("disabled",true);
-				}*/
-        v_button_edit.innerHTML = '<i class="fas fa-pen"</i>'
-        v_card_body_buttons.appendChild(v_button_edit);
-
-        var v_button_delete = document.createElement('button');
-        v_button_delete.className = 'btn btn-danger btn-sm mx-1';
-        v_button_delete.title = "Delete";
-        if (v_conn_obj.locked==true) {
-					v_button_delete.setAttribute("disabled",true);
-				}
-        v_button_delete.innerHTML = '<i class="fas fa-trash-alt"></i>'
-        v_card_body_buttons.appendChild(v_button_delete);
-
 				v_button_select.onclick = (function(conn_obj) {
 					return function() {
 						selectConnection(conn_obj);
 					};
 				}(v_conn_obj));
 
-        v_button_edit.onclick = (function(conn_obj) {
-          return function() {
-            editConnection(conn_obj);
-          };
-        }(v_conn_obj));
+				if (v_connections_data.is_super==true) {
+					var v_button_edit = document.createElement('button');
+					v_button_edit.className = 'btn btn-sm mx-1 omnidb__theme__btn--primary';
+					v_button_edit.title = "Edit";
+					/*if (v_conn_obj.locked==true) {
+								v_button_edit.setAttribute("disabled",true);
+							}*/
+					v_button_edit.innerHTML = '<i class="fas fa-pen"</i>'
+					v_card_body_buttons.appendChild(v_button_edit);
 
-        v_button_delete.onclick = (function(conn_obj) {
-          return function() {
-            deleteConnection(conn_obj);
-          };
-        }(v_conn_obj));
+					var v_button_delete = document.createElement('button');
+					v_button_delete.className = 'btn btn-danger btn-sm mx-1';
+					v_button_delete.title = "Delete";
+					if (v_conn_obj.locked==true) {
+								v_button_delete.setAttribute("disabled",true);
+							}
+					v_button_delete.innerHTML = '<i class="fas fa-trash-alt"></i>'
+					v_card_body_buttons.appendChild(v_button_delete);
+
+					v_button_edit.onclick = (function(conn_obj) {
+					  return function() {
+						editConnection(conn_obj);
+					  };
+					}(v_conn_obj));
+
+					v_button_delete.onclick = (function(conn_obj) {
+					  return function() {
+						deleteConnection(conn_obj);
+					  };
+					}(v_conn_obj));
+				}
 
 				// Adding public visuals.
 				if (v_conn_obj.public) {
@@ -357,7 +376,11 @@ function groupChange(p_value) {
 function manageGroup() {
   document.getElementById('group_actions_1').style.display = 'none';
   document.getElementById('group_actions_2').style.display = '';
-	document.getElementById('button_new_connection').setAttribute('disabled',true);
+  var obj = document.getElementById('button_new_connection');
+  if(obj){
+  	obj.setAttribute('disabled',true);
+  }
+	//document.getElementById('button_new_connection').setAttribute('disabled',true);
 	document.getElementById('group_selector').setAttribute('disabled',true);
 	document.getElementById('button_new_group').setAttribute('disabled',true);
 	document.getElementById('button_group_actions').setAttribute('disabled',true);
@@ -400,7 +423,11 @@ function manageGroupSave() {
   document.getElementById('group_actions_1').style.display = '';
   document.getElementById('group_actions_2').style.display = 'none';
 
-	document.getElementById('button_new_connection').removeAttribute('disabled');
+  var obj = document.getElementById('button_new_connection');
+  if(obj){
+  	obj.removeAttribute('disabled');
+  }
+	//document.getElementById('button_new_connection').removeAttribute('disabled');
 	document.getElementById('group_selector').removeAttribute('disabled');
 	document.getElementById('button_new_group').removeAttribute('disabled');
 	document.getElementById('button_group_actions').removeAttribute('disabled');
@@ -625,6 +652,7 @@ function saveConnection() {
 
 	var input = JSON.stringify({
     "id": v_connections_data.current_id,
+	"omnidb_user": document.getElementById('conn_omnidb_user').value,
     "type": document.getElementById('conn_form_type').value,
 		"public": document.getElementById('conn_form_public').checked,
     "connstring": document.getElementById('conn_form_connstring').value,
@@ -692,11 +720,28 @@ function adjustTechSelector() {
   }
 }
 
+function adjustUserSelector() {
+  var select = document.getElementById('conn_omnidb_user');
+  select.innerHTML = '';
+  var option = document.createElement('option');
+  option.value = "";
+  option.textContent = 'Select User';
+  select.appendChild(option);
+  for (var i=0; i<v_connections_data.users.length; i++) {
+    option = document.createElement('option');
+    option.value = v_connections_data.users[i].user_id;
+    option.textContent = v_connections_data.users[i].user_name;
+    select.appendChild(option);
+  }
+}
+
 function editConnection(p_conn_obj) {
 
   v_connections_data.current_id = p_conn_obj.id;
   adjustTechSelector();
+  adjustUserSelector();
 
+  document.getElementById('conn_omnidb_user').value = p_conn_obj.user_id;
   document.getElementById('conn_form_type').value = p_conn_obj.technology;
   document.getElementById('conn_form_title').value = p_conn_obj.alias;
   document.getElementById('conn_form_connstring').value = p_conn_obj.conn_string;
@@ -855,9 +900,11 @@ function newConnection() {
 
   v_connections_data.current_id = -1;
   adjustTechSelector();
+  adjustUserSelector();
 
 	document.getElementById('conn_form_button_test_connection').setAttribute('disabled',true);
 	document.getElementById('conn_form_button_save_connection').setAttribute('disabled',true);
+	document.getElementById('conn_omnidb_user').value = '';
   document.getElementById('conn_form_type').value = -1;
 	document.getElementById('conn_form_title').value = '';
 	document.getElementById('conn_form_public').checked = false;
@@ -950,6 +997,7 @@ function updateModalEditConnectionState(e) {
   let v_enable_list = [];
 	// IDs of elements that should be required.
 	let v_form_cases = ['conn_form_type'];
+	let v_omnidb_user = document.getElementById('conn_omnidb_user').value;
 	let v_technology = document.getElementById('conn_form_type').value;
 	let v_allow_tunnel = document.getElementById('conn_form_use_tunnel').checked;
 	let v_use_connection_string = document.getElementById('conn_form_connstring').value;

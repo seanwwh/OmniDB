@@ -117,7 +117,9 @@
           <div class="modal-header">
             <h5 class="modal-title">
               Connections
+              {% if super_user == 1 %}
               <button id="button_new_connection" type="button" class="btn omnidb__theme__btn--primary" onclick="newConnection();">New connection</button>
+              {% endif %}
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
@@ -174,7 +176,13 @@
           <div class="modal-body">
 
               <div class="form-row">
-                <div class="col-md-4 mb-3 required">
+                <div class="col-md-2 mb-3 required">
+                  <label for="conn_form_omnidb_user">Select an user</label>
+                  <select id="conn_omnidb_user" class="form-control">
+                    <option value="" selected="">Select User</option>
+                  </select>
+                </div>
+                <div class="col-md-2 mb-3 required">
                   <label for="conn_form_type">Connection Type</label>
                   <select id="conn_form_type" class="form-control" oninput="updateModalEditConnectionState(event)">
                     <option value=-1 selected>Select Type</option>

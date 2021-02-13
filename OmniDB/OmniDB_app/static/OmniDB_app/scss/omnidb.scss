@@ -968,17 +968,29 @@ button.close {
   max-width: 50%;
   padding: 5px 15px;
 }
+
 .omnidb__connections__card-list--rows .card-body {
+  align-items: center;
+  display: grid;
+  grid-template:
+  'icon title buttons' 2rem;
+  grid-template-columns: 24px auto;
+  padding: 5px;
+  padding-left: 14px;
+}
+
+.omnidb__connections__card-list--rows .card-body-superuser {
   align-items: center;
   display: grid;
   grid-template:
   'icon title buttons' 2rem
   'details details details' 1.5rem
-  'tunnel tunnel tunnel' 1.5rem;
-  grid-template-columns: 24px auto;
+  'tunnel tunnel tunnel' 1.5rem!important;
+  grid-template-columns: 24px auto!important;
   padding: 5px;
   padding-left: 14px;
 }
+
 .omnidb__connections__card-list--rows .card-body-icon {
   grid-area: icon;
 }

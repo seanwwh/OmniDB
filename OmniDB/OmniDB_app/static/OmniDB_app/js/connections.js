@@ -996,8 +996,7 @@ function updateModalEditConnectionState(e) {
 	// IDs of elements that should be enabled.
   let v_enable_list = [];
 	// IDs of elements that should be required.
-	let v_form_cases = ['conn_form_type'];
-	let v_omnidb_user = document.getElementById('conn_omnidb_user').value;
+	let v_form_cases = ['conn_omnidb_user','conn_form_type'];
 	let v_technology = document.getElementById('conn_form_type').value;
 	let v_allow_tunnel = document.getElementById('conn_form_use_tunnel').checked;
 	let v_use_connection_string = document.getElementById('conn_form_connstring').value;
@@ -1064,6 +1063,7 @@ function updateModalEditConnectionState(e) {
 
 		let v_block_conn_string = false;
 		let v_check_inputs = [
+		'conn_omnidb_user',
       'conn_form_server',
       'conn_form_port',
       'conn_form_database',
@@ -1137,7 +1137,7 @@ function updateModalEditConnectionState(e) {
         'conn_form_ssh_user',
         'conn_form_ssh_password',
         'conn_form_ssh_key',
-				'conn_form_ssh_key_input'
+		'conn_form_ssh_key_input'
       ];
 			document.getElementById('conn_form_use_tunnel').checked = true;
 			document.getElementById('conn_form_use_tunnel').setAttribute('disabled', true);

@@ -63,6 +63,7 @@ def get_connections(request):
             v_conns = Connection.objects.all()
         else:
             v_conns = Connection.objects.filter(Q(user=request.user) | Q(public=True))
+
         for conn in v_conns:
 
             conn.user.id != request.user.id
@@ -410,7 +411,7 @@ def save_connection(request):
         else:
             conn = Connection.objects.get(id=p_id)
 
-            if conn.user.id != request.user.id:
+            if conn.user.id != request.user.id and request.user.is_superuser == False:
                 v_return['v_data'] = 'This connection does not belong to you.'
                 v_return['v_error'] = True
                 return JsonResponse(v_return)

@@ -191,7 +191,12 @@ class Session(object):
         self.v_databases = {}
 
         try:
-            for conn in Connection.objects.filter(Q(user=User.objects.get(id=self.v_user_id)) | Q(public=True)):
+            if self.v_super_user:
+                v_conns = Connection.objects.all()
+            else:
+                v_conns = Connection.objects.filter(Q(user=User.objects.get(id=self.v_user_id)) | Q(public=True))
+
+            for conn in v_conns:
                 tunnel_information = {
                     'enabled': conn.use_tunnel,
                     'server': conn.ssh_server,

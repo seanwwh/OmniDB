@@ -52,10 +52,10 @@ def get_connections(request):
 
     v_user_list = []
     v_user_dict = {}
-    for user in UserDetails.objects.all():
-        v_user_object = {'user_id': user.user_id, 'user_name': user.user.username}
+    for user in User.objects.all():
+        v_user_object = {'user_id': user.id, 'user_name': user.username}
         v_user_list.append(v_user_object)
-        v_user_dict[user.user_id] = user.user.username
+        v_user_dict[user.id] = user.username
 
     v_connection_list = []
     try:

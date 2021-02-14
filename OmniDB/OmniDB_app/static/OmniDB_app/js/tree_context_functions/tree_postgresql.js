@@ -4783,42 +4783,45 @@ function getTreeDetailsPostgresql(node) {
                 }, 'cm_databases');
             node_databases.createChildNode('', true,
                 'node-spin', null, null);
-            var node_tablespaces = node.createChildNode('Tablespaces',
-                false, 'fas node-all fa-folder-open node-tablespace-list', {
-                    type: 'tablespace_list',
-                    num_tablespaces: 0
-                }, 'cm_tablespaces');
-            node_tablespaces.createChildNode('', true,
-                'node-spin', null, null);
-            var node_roles = node.createChildNode('Roles', false,
-                'fas node-all fa-users node-user-list', {
-                    type: 'role_list',
-                    num_roles: 0
-                }, 'cm_roles');
-            node_roles.createChildNode('', true,
-                'node-spin', null, null);
-            if (parseFloat(getMajorVersionPostgresql(node.tree.tag.version)) >= 9.4) {
-                var node_replication = node.createChildNode(
-                    'Replication Slots', false,
-                    'fas node-all fa-sitemap node-repslot-list', {
-                        type: 'replication',
-                    }, null);
-                var node_phyrepslots = node_replication.createChildNode(
-                    'Physical Replication Slots', false,
-                    'fas node-all fa-sitemap node-repslot-list', {
-                        type: 'physicalreplicationslot_list',
-                        num_repslots: 0
-                    }, 'cm_physicalreplicationslots');
-                node_phyrepslots.createChildNode('', true,
+
+            if (p_return.v_data.v_is_super) {
+                var node_tablespaces = node.createChildNode('Tablespaces',
+                    false, 'fas node-all fa-folder-open node-tablespace-list', {
+                        type: 'tablespace_list',
+                        num_tablespaces: 0
+                    }, 'cm_tablespaces');
+                node_tablespaces.createChildNode('', true,
                     'node-spin', null, null);
-                var node_logrepslots = node_replication.createChildNode(
-                    'Logical Replication Slots', false,
-                    'fas node-all fa-sitemap node-repslot-list', {
-                        type: 'logicalreplicationslot_list',
-                        num_repslots: 0
-                    }, 'cm_logicalreplicationslots');
-                node_logrepslots.createChildNode('', true,
+                var node_roles = node.createChildNode('Roles', false,
+                    'fas node-all fa-users node-user-list', {
+                        type: 'role_list',
+                        num_roles: 0
+                    }, 'cm_roles');
+                node_roles.createChildNode('', true,
                     'node-spin', null, null);
+                if (parseFloat(getMajorVersionPostgresql(node.tree.tag.version)) >= 9.4) {
+                    var node_replication = node.createChildNode(
+                        'Replication Slots', false,
+                        'fas node-all fa-sitemap node-repslot-list', {
+                            type: 'replication',
+                        }, null);
+                    var node_phyrepslots = node_replication.createChildNode(
+                        'Physical Replication Slots', false,
+                        'fas node-all fa-sitemap node-repslot-list', {
+                            type: 'physicalreplicationslot_list',
+                            num_repslots: 0
+                        }, 'cm_physicalreplicationslots');
+                    node_phyrepslots.createChildNode('', true,
+                        'node-spin', null, null);
+                    var node_logrepslots = node_replication.createChildNode(
+                        'Logical Replication Slots', false,
+                        'fas node-all fa-sitemap node-repslot-list', {
+                            type: 'logicalreplicationslot_list',
+                            num_repslots: 0
+                        }, 'cm_logicalreplicationslots');
+                    node_logrepslots.createChildNode('', true,
+                        'node-spin', null, null);
+                }
             }
 
             if (v_connTabControl.selectedTab.tag.firstTimeOpen) {

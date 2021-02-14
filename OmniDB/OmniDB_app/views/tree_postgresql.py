@@ -153,7 +153,8 @@ def get_tree_info(request, v_database):
                 'create_statistics': v_database.TemplateCreateStatistics().v_text,
                 'alter_statistics': v_database.TemplateAlterStatistics().v_text,
                 'drop_statistics': v_database.TemplateDropStatistics().v_text,
-            }
+            },
+            'v_is_super': request.user.is_superuser
         }
     except Exception as exc:
         v_return['v_data'] = {'password_timeout': True, 'message': str(exc) }
